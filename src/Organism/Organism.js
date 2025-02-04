@@ -355,6 +355,30 @@ class Organism {
             this.brain.copy(org.brain)
     }
 
+    move(col, row) {
+        // Update spatial grid before changing position
+        const oldKey = `${Math.floor(this.c/this.env.gridSize)},${Math.floor(this.r/this.env.gridSize)}`;
+        if(this.env.spatialGrid.has(oldKey)) {
+            this.env.spatialGrid.get(oldKey).delete(this);
+        }
+        
+        this.c = col;
+        this.r = row;
+        
+        // Update spatial grid with new position
+        const newKey = `${Math.floor(col/this.env.gridSize)},${Math.floor(row/this.env.gridSize)}`;
+        if(!this.env.spatialGrid.has(newKey)) {
+            this.env.spatialGrid.set(newKey, new Set());
+        }
+        this.env.spatialGrid.get(newKey).add(this);
+        
+        this.updateGrid();
+    }
+
+    setColRow(col, row) {
+        this.move(col, row);
+    }
+
 }
 
 module.exports = Organism;

@@ -86,6 +86,15 @@ class GridMap {
     }
 
     loadRaw(grid) {
+        // Handle both 1D and legacy 2D formats
+        if(grid.grid) { // Legacy 2D format
+            grid.food = grid.grid.flatMap(col => 
+                col.filter(c => c.state === 'food').map(c => ({c: c.col, r: c.row}))
+            );
+            grid.walls = grid.grid.flatMap(col =>
+                col.filter(c => c.state === 'wall').map(c => ({c: c.col, r: c.row}))
+            );
+        }
         for (let f of grid.food)
             this.setCellType(f.c, f.r, CellStates.food);
         for (let w of grid.walls)

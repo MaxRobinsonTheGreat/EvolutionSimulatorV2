@@ -61,6 +61,7 @@ class WorldEnvironment extends Environment{
     }
 
     removeOrganisms(org_indeces) {
+        const start_pop = this.organisms.length;
         // Sort indices in descending order to avoid shifting issues
         const sortedIndices = [...org_indeces].sort((a, b) => b - a);
         let removedMutability = 0;
@@ -69,10 +70,14 @@ class WorldEnvironment extends Environment{
             const org = this.organisms[i];
             removedMutability += org.mutability;
             
-            // Cleanup spatial grid
-            const key = `${Math.floor(org.c/this.gridSize)},${Math.floor(org.r/this.gridSize)}`;
-            if(this.spatialGrid.has(key)) {
-                this.spatialGrid.get(key).delete(org);
+            // Add cleanup for all adjacent grid cells
+            for(let dc = -1; dc <= 1; dc++) {
+                for(let dr = -1; dr <= 1; dr++) {
+                    const key = `${Math.floor((org.c+dc)/this.gridSize)},${Math.floor((org.r+dr)/this.gridSize)}`;
+                    if(this.spatialGrid.has(key)) {
+                        this.spatialGrid.get(key).delete(org);
+                    }
+                }
             }
             
             this.organisms.splice(i, 1);
@@ -80,6 +85,16 @@ class WorldEnvironment extends Environment{
 
         this.total_mutability -= removedMutability;
         if (this.total_mutability < 0) this.total_mutability = 0;
+
+        // Add back population check
+        if (this.organisms.length === 0 && start_pop > 0) {
+            if (WorldConfig.auto_pause)
+                $('.pause-button')[0].click();
+            else if(WorldConfig.auto_reset) {
+                this.reset_count++;
+                this.reset(false);
+            }
+        }
     }
 
     OriginOfLife() {
@@ -116,9 +131,10 @@ class WorldEnvironment extends Environment{
 
     changeCell(c, r, state, owner) {
         super.changeCell(c, r, state, owner);
-        this.renderer.addToRender(this.grid_map.cellAt(c, r));
+        const cell = this.grid_map.cellAt(c, r);
+        this.renderer.addToRender(cell);
         if(state == CellStates.wall)
-            this.walls.push(this.grid_map.cellAt(c, r));
+            this.walls.push(cell);
     }
 
     clearWalls() {
