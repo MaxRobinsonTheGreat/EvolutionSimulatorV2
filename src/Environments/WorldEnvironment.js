@@ -61,15 +61,25 @@ class WorldEnvironment extends Environment{
     }
 
     removeOrganisms(org_indeces) {
-        // Add spatial grid cleanup
-        const removedOrgs = org_indeces.map(i => this.organisms[i]);
-        super.removeOrganisms(org_indeces);
-        removedOrgs.forEach(org => {
+        // Sort indices in descending order to avoid shifting issues
+        const sortedIndices = [...org_indeces].sort((a, b) => b - a);
+        let removedMutability = 0;
+        
+        sortedIndices.forEach(i => {
+            const org = this.organisms[i];
+            removedMutability += org.mutability;
+            
+            // Cleanup spatial grid
             const key = `${Math.floor(org.c/this.gridSize)},${Math.floor(org.r/this.gridSize)}`;
             if(this.spatialGrid.has(key)) {
                 this.spatialGrid.get(key).delete(org);
             }
+            
+            this.organisms.splice(i, 1);
         });
+
+        this.total_mutability -= removedMutability;
+        if (this.total_mutability < 0) this.total_mutability = 0;
     }
 
     OriginOfLife() {
