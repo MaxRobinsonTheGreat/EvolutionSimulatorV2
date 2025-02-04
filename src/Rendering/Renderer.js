@@ -14,6 +14,7 @@ class Renderer {
         this.cells_to_render = new Set();
         this.cells_to_highlight = new Set();
         this.highlighted_cells = new Set();
+        this.dirtyCells = new Set();
     }
 
     fillWindow(container_id) {
@@ -33,18 +34,17 @@ class Renderer {
     }
 
     renderFullGrid(grid) {
-        for (var col of grid) {
-            for (var cell of col){
-                this.renderCell(cell);
-            }
+        for (const cell of grid) {
+            this.renderCell(cell);
         }
     }
 
     renderCells() {
-        for (var cell of this.cells_to_render) {
-            this.renderCell(cell);
+        this.ctx.beginPath();
+        for(const cell of this.dirtyCells) {
+            cell.state.render(this.ctx, cell, this.cell_size);
         }
-        this.cells_to_render.clear();
+        this.dirtyCells.clear();
     }
 
     renderCell(cell) {
@@ -52,17 +52,14 @@ class Renderer {
     }
 
     renderOrganism(org) {
-        for(var org_cell of org.anatomy.cells) {
-            var cell = org.getRealCell(org_cell);
-            this.renderCell(cell);
-        }
+        org.anatomy.cells.forEach(org_cell => {
+            const cell = org.getRealCell(org_cell);
+            if(cell) this.dirtyCells.add(cell);
+        });
     }
 
     addToRender(cell) {
-        if (this.highlighted_cells.has(cell)){
-            this.cells_to_highlight.add(cell);
-        }
-        this.cells_to_render.add(cell);
+        this.dirtyCells.add(cell);
     }
 
     renderHighlights() {

@@ -120,7 +120,14 @@ class ControlPanel {
 
     defineEngineSpeedControls(){
         this.slider = document.getElementById("slider");
-        this.slider.oninput = function() {
+        function debounce(func, wait=100) {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+        this.slider.oninput = debounce(function() {
             const max_fps = 300;
             this.fps = parseInt(this.slider.value);
             if (this.fps>=max_fps) this.fps = 1000;
@@ -129,7 +136,7 @@ class ControlPanel {
             }
             let text = this.fps >= max_fps ? 'MAX' : this.fps;
             $('#fps').text("Target FPS: "+text);
-        }.bind(this);
+        }.bind(this));
 
         $('.pause-button').click(function() {
             // toggle pause

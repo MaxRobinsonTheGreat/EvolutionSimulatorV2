@@ -52,19 +52,30 @@ class Brain {
     }
 
     decide() {
-        var decision = Decision.neutral;
-        var closest = Hyperparams.lookRange + 1;
-        var move_direction = 0;
-        for (var obs of this.observations) {
-            if (obs.cell == null || obs.cell.owner == this.owner) {
-                continue;
-            }
-            if (obs.distance < closest) {
-                decision = this.decisions[obs.cell.state.name];
-                move_direction = obs.direction;
-                closest = obs.distance;
+        if(this.observations.length === 0) return false;
+        
+        // Find closest observation in O(n) time
+        let closest = this.observations[0];
+        for(const obs of this.observations) {
+            if(obs.distance < closest.distance) {
+                closest = obs;
             }
         }
+        
+        var decision = Decision.neutral;
+        var move_direction = 0;
+        if (closest.cell && closest.cell.owner === this.owner) {
+            decision = this.decisions[closest.cell.state.name];
+            move_direction = closest.direction;
+        } else if (closest.cell) {
+            decision = this.decisions[closest.cell.state.name];
+            move_direction = closest.direction;
+        }
+        // If cell is null (edge of map), use empty cell decision
+        else {
+            decision = this.decisions[CellStates.empty.name];
+        }
+        
         this.observations = [];
         if (decision == Decision.chase) {
             this.owner.changeDirection(move_direction);
