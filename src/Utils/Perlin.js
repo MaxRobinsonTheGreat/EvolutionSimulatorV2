@@ -21,12 +21,12 @@ let perlin = {
         return a + this.smootherstep(x) * (b-a);
     },
     seed: function(){
-        this.gradients = {};
-        this.memory = {};
+        this.gradients = new Map();
+        this.memory = new Map();
     },
     get: function(x, y) {
-        if (this.memory.hasOwnProperty([x,y]))
-            return this.memory[[x,y]];
+        const key = `${x.toFixed(2)}|${y.toFixed(2)}`;
+        if(this.memory.has(key)) return this.memory.get(key);
         let xf = Math.floor(x);
         let yf = Math.floor(y);
         //interpolate
@@ -37,7 +37,7 @@ let perlin = {
         let xt = this.interp(x-xf, tl, tr);
         let xb = this.interp(x-xf, bl, br);
         let v = this.interp(y-yf, xt, xb);
-        this.memory[[x,y]] = v;
+        this.memory.set(key, v);
         return v;
     }
 }

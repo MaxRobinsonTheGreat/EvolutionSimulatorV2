@@ -26,21 +26,22 @@ class WorldEnvironment extends Environment{
         this.total_ticks = 0;
         this.data_update_rate = 100;
         FossilRecord.setEnv(this);
+        this.spatialGrid = new Map();
+        this.gridSize = 20; // Adjust based on typical organism size
     }
 
     update() {
-        var to_remove = [];
-        for (var i in this.organisms) {
-            var org = this.organisms[i];
+        // Iterate backwards to safely remove elements
+        for (let i = this.organisms.length - 1; i >= 0; i--) {
+            const org = this.organisms[i];
             if (!org.living || !org.update()) {
-                to_remove.push(i);
+                this.removeOrganisms([i]);
             }
         }
-        this.removeOrganisms(to_remove);
         if (Hyperparams.foodDropProb > 0) {
             this.generateFood();
         }
-        this.total_ticks ++;
+        this.total_ticks++;
         if (this.total_ticks % this.data_update_rate == 0) {
             FossilRecord.updateData();
         }
@@ -60,19 +61,15 @@ class WorldEnvironment extends Environment{
     }
 
     removeOrganisms(org_indeces) {
-        let start_pop = this.organisms.length;
-        for (var i of org_indeces.reverse()){
-            this.total_mutability -= this.organisms[i].mutability;
-            this.organisms.splice(i, 1);
-        }
-        if (this.organisms.length === 0 && start_pop > 0) {
-            if (WorldConfig.auto_pause)
-                $('.pause-button')[0].click();
-            else if(WorldConfig.auto_reset) {
-                this.reset_count++;
-                this.reset(false);
+        // Add spatial grid cleanup
+        const removedOrgs = org_indeces.map(i => this.organisms[i]);
+        super.removeOrganisms(org_indeces);
+        removedOrgs.forEach(org => {
+            const key = `${Math.floor(org.c/this.gridSize)},${Math.floor(org.r/this.gridSize)}`;
+            if(this.spatialGrid.has(key)) {
+                this.spatialGrid.get(key).delete(org);
             }
-        }
+        });
     }
 
     OriginOfLife() {
@@ -91,6 +88,7 @@ class WorldEnvironment extends Environment{
         this.organisms.push(organism);
         if (organism.anatomy.cells.length > this.largest_cell_count) 
             this.largest_cell_count = organism.anatomy.cells.length;
+        this.updateSpatialGrid(organism);
     }
 
     canAddOrganism() {
@@ -236,6 +234,17 @@ class WorldEnvironment extends Environment{
         if ($('#override-controls').is(':checked'))
             Hyperparams.loadJsonObj(env.controls)
         this.renderer.renderFullGrid(this.grid_map.grid);
+    }
+
+    updateSpatialGrid(org) {
+        const key = `${Math.floor(org.c/this.gridSize)},${Math.floor(org.r/this.gridSize)}`;
+        if(!this.spatialGrid.has(key)) this.spatialGrid.set(key, new Set());
+        this.spatialGrid.get(key).add(org);
+    }
+
+    getNearbyOrganisms(c, r) {
+        const key = `${Math.floor(c/this.gridSize)},${Math.floor(r/this.gridSize)}`;
+        return this.spatialGrid.get(key) || new Set();
     }
 }
 
