@@ -9,6 +9,7 @@ var color_scheme = {
     "mover":"#60D4FF",
     "killer":"#F82380",
     "armor":"#7230DB",
+    "cool":"blue",
     "eye":"#B6C1EA",
     "eye-slit": "#0E1318"
 }
