@@ -14,7 +14,6 @@ class Anatomy {
         this.is_producer = false;
         this.is_mover = false;
         this.has_eyes = false;
-        this.cool_count = 0;
     }
 
     canAddCellAt(c, r) {
@@ -29,9 +28,6 @@ class Anatomy {
     addDefaultCell(state, c, r) {
         var new_cell = BodyCellFactory.createDefault(this.owner, state, c, r);
         this.cells.push(new_cell);
-        if (new_cell.state == CellStates.cool){
-            this.cool_count += 1;
-        }
         return new_cell;
     }
 
@@ -41,18 +37,12 @@ class Anatomy {
         }
         var new_cell = BodyCellFactory.createRandom(this.owner, state, c, r);
         this.cells.push(new_cell);
-        if (new_cell.state == CellStates.cool){
-            this.cool_count += 1;
-        }
         return new_cell;
     }
 
     addInheritCell(parent_cell) {
         var new_cell = BodyCellFactory.createInherited(this.owner, parent_cell);
         this.cells.push(new_cell);
-        if (new_cell.state == CellStates.cool){
-            this.cool_count += 1;
-        }
         return new_cell;
     }
 
@@ -72,9 +62,6 @@ class Anatomy {
         for (var i=0; i<this.cells.length; i++) {
             var cell = this.cells[i];
             if (cell.loc_col == c && cell.loc_row == r){
-                if (cell.state == CellStates.cool){
-                    this.cool_count -= 1;
-                }
                 this.cells.splice(i, 1);
                 break;
             }
@@ -152,9 +139,6 @@ class Anatomy {
         for (let cell of this.cells) {
             let newcell = SerializeHelper.copyNonObjects(cell);
             newcell.state = {name: cell.state.name};
-            if (state == CellStates.cool){
-                this.cool_count += 1;
-            }
             anatomy.cells.push(newcell)
         }
         return anatomy;

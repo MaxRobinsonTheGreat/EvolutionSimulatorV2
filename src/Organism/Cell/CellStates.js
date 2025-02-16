@@ -54,6 +54,35 @@ class Armor extends CellState {
 class Cool extends CellState {
     constructor() {
         super('cool');
+        this.cross = "red";
+    }
+    
+    render(ctx, cell, size) {
+        // Fill the cell background as white
+        ctx.fillStyle = "white";
+        ctx.fillRect(cell.x, cell.y, size, size);
+        
+        if (size === 1) return; // Avoid drawing for very small cells
+
+        const half = size / 2;
+        const crossThickness = size / 6; // Thickness of the cross
+        const crossSize = size * 0.6; // Length of the cross arms
+
+        // Save the original context state
+        ctx.save();
+        
+        // Move to the center of the cell
+        ctx.translate(cell.x + half, cell.y + half);
+        ctx.fillStyle = this.cross;
+        
+        // Draw the vertical part of the cross
+        ctx.fillRect(-crossThickness / 2, -crossSize / 2, crossThickness, crossSize);
+        
+        // Draw the horizontal part of the cross
+        ctx.fillRect(-crossSize / 2, -crossThickness / 2, crossSize, crossThickness);
+        
+        // Restore the context to avoid affecting other drawings
+        ctx.restore();
     }
 }
 class Camo extends CellState {

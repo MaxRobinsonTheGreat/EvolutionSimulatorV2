@@ -7,13 +7,13 @@ const Decision = {
     neutral: 0,
     retreat: 1,
     chase: 2,
-    left: 3,
-    right: 4,
+    rotate_left: 3,
+    rotate_right: 4,
     getRandom: function(){
-        return Math.floor(Math.random() * 5);
+        return Math.round(Math.random() * 4);
     },
     getRandomNonNeutral: function() {
-        return Math.floor(Math.random() * 2)+1;
+        return Math.round(Math.random() * 2)+1;
     }
 }
 
@@ -23,7 +23,7 @@ class Brain {
         this.owner = owner;
         this.observations = [];
         this.chemicals = [];
-        // corresponds to CellTypes
+        // relates to CellTypes
         this.decisions = {};
         this.chemDecisions = {};
         for (let cell of CellStates.all) {
@@ -31,33 +31,17 @@ class Brain {
         }
         this.decisions[CellStates.food.name] = Decision.chase;
         this.decisions[CellStates.killer.name] = Decision.retreat;
-        this.createNeurons();
+        if (this.neurons == null)
+            this.createNeurons();
     }
 
     copy(brain) {
-        for (let dec in brain.decisions) {
-            this.decisions[dec] = brain.decisions[dec];
-        }
+        this.decisions = JSON.parse(JSON.stringify(brain.decisions));
         this.neurons = brain.neurons.copy();
     }
 
     randomizeDecisions(randomize_all=true) {
-        // randomize the non obvious decisions
-        if (randomize_all) {
-            this.decisions[CellStates.food.name] = Decision.getRandom();
-            this.decisions[CellStates.killer.name] = Decision.getRandom();
-        }
-        this.decisions[CellStates.mouth.name] = Decision.getRandom();
-        this.decisions[CellStates.parasitic.name] = Decision.getRandom();
-        this.decisions[CellStates.wall.name] = Decision.getRandom();
-        this.decisions[CellStates.empty.name] = Decision.getRandom();
-        this.decisions[CellStates.producer.name] = Decision.getRandom();
-        this.decisions[CellStates.mover.name] = Decision.getRandom();
-        this.decisions[CellStates.armor.name] = Decision.getRandom();
-        this.decisions[CellStates.cool.name] = Decision.getRandom();
-        this.decisions[CellStates.eye.name] = Decision.getRandom();
-        this.decisions[CellStates.detector.name] = Decision.getRandom();
-        this.decisions[CellStates.secretion.name] = Decision.getRandom();
+        // obsolete
     }
 
     randomizeChemicalDecisions(d) {
@@ -73,6 +57,15 @@ class Brain {
             randomizeChemicalDecisions(detection)
     }
 
+    assignMove(move) {
+        if(move == true) {
+            return 20
+        }
+        else {
+            return 10
+        }
+    }
+
     decide() {
         var decision = Decision.neutral;
         var closest = Hyperparams.lookRange + 1;
@@ -83,7 +76,7 @@ class Brain {
                 closest = obs.distance;
             }
         }
-        decision = this.fireNeurons(this.owner.food_collected, this.owner.lifetime, this.owner.damage, this.observations, this.chemicals);
+        decision = this.fireNeurons(this.owner.food_collected, this.owner.lifetime, this.owner.damage, this.assignMove(this.owner.moved), this.observations, this.chemicals);
         this.observations = [];
         this.chemicals = [];
         if (decision == Decision.chase) {
@@ -94,21 +87,15 @@ class Brain {
             this.owner.changeDirection(Directions.getOppositeDirection(move_direction));
             return true;
         }
-        else if (decision == Decision.left) {
-            this.owner.changeDirection(Directions.getLeftDirection(move_direction));
+        else if (decision == Decision.rotate_left) {
+            this.owner.attemptRotate(Directions.getLeftDirection(move_direction));
             return true;
         }
-        else if (decision == Decision.right) {
-            this.owner.changeDirection(Directions.getRightDirection(move_direction));
+        else if (decision == Decision.rotate_right) {
+            this.owner.attemptRotate(Directions.getRightDirection(move_direction));
             return true;
         }
         return false;
-    }
-
-    mutate() {
-        this.decisions[CellStates.getRandomName()] = Decision.getRandom();
-        this.decisions[CellStates.empty.name] = Decision.neutral; // if the empty cell has a decision it gets weird
-        this.mutateNeurons();
     }
     
     serialize() {
@@ -121,6 +108,7 @@ class Brain {
         this.neurons.addInput("food_collected");
         this.neurons.addInput("lifetime");
         this.neurons.addInput("damage");
+        this.neurons.addInput("moved");
         for (let i = 0; i < this.owner.anatomy.countCellType(CellStates.eye); i++)
             this.neurons.addInput("obs" + i);
         for (let i = 0; i < this.owner.anatomy.countCellType(CellStates.detector); i++)
@@ -133,38 +121,40 @@ class Brain {
         this.neurons.addOutput(Brain.Decision.neutral);
         this.neurons.addOutput(Brain.Decision.chase);
         this.neurons.addOutput(Brain.Decision.retreat);
-        this.neurons.addOutput(Brain.Decision.left);
-        this.neurons.addOutput(Brain.Decision.right);
+        this.neurons.addOutput(Brain.Decision.rotate_left); // I changed this
+        this.neurons.addOutput(Brain.Decision.rotate_right);
+        this.neurons.addOutput("nothing")
         // every input needs to be connected
         // every output needs to be connected
         // plus we need neurons to be connected
         // remove unconnected neurons at the end
         // this.neurons.addInputConnection("food_collected") // connected from the input to some random neuron, maybe even an output neuron
-        this.neurons.addConnection()
-        this.neurons.addConnection()
-        this.neurons.addConnection()
-        this.neurons.addConnection()
-        this.neurons.addConnection()
-        this.neurons.addConnection()
+        let numOfInputs = this.neurons.getInputCount();
+        let numOfOthers = this.neurons.getNeuronCount() - numOfInputs;
+        for (let i = 0; i < this.neurons.neurons.length; i++) {
+        let n = numOfInputs + Math.floor(Math.random() * numOfOthers) - 1;
+        let w = Math.random() * 2;
+        this.neurons.addConnection(i, n, w);
+        }
+        
     }
 
-    mutateNeurons() {
-        // to do
+    mutate() {
+        this.neurons.mutate()
     }
 
-    fireNeurons(food_collected, lifetime, damage, observations, chemicals) {
-        // give inputs to neurons
+    fireNeurons(food_collected, lifetime, damage, moved, observations, chemicals) {
+        // set neuron inputs
         this.neurons.setInput("food_collected", food_collected);
         this.neurons.setInput("lifetime", lifetime);
         this.neurons.setInput("damage", damage);
+        this.neurons.setInput("moved", moved);
         for (let i = 0; i < observations.length; i++)
             this.neurons.setInput("obs" + i, this.mapObsToValue(observations[i]));
         for (let i = 0; i < chemicals.length; i++)
             this.neurons.setInput("chem" + i, this.mapChemToValue(chemicals[i]));
-        // give neurons to neurons
+        // find the winning decision
         this.neurons.compute();
-        this.neurons.log();
-        // find the decision
         let highestValue = 0;
         let winningDecision = Decision.neutral;
         for (let decision in this.neurons.getOutputs()) {

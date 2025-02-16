@@ -22,7 +22,7 @@ class ParasiticCell extends BodyCell {
                 if (cell == null || cell.owner == null || cell.owner == this.org || !cell.owner.living || cell.state == CellStates.armor || cell.state == CellStates.killer) {
                     return
                 }
-                if (cell.owner.feed() > 0) {
+                if (cell.owner.feed() > 5) {
                     let foodTaken = cell.owner.feed(true)
                     this.org.food_collected += foodTaken
                 }

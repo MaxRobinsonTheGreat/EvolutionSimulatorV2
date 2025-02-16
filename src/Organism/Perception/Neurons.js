@@ -1,44 +1,7 @@
 const Brain = require("./Brain");
 
-// Notes:
-// -Every weight is unique (0-1)
-
-// i <-- w --> n <-- w --> o
-
-// i <-- w -->
-// inputs:
-// {inputId: {neuronId: weight, ...}, ...}
-// { 0: { 11: w, 7: w, 13: w },
-//   1: { 11: w, 6: w,  3: w } }
-// (output = a brain decition)
-
-// n
-// neuronValue:
-// {neuronId: value}
-// {7, 33}
-
-// <-- w --> o
-// neuronDict:
-// {neuronId: [{neuronId: weight,...}, dicision], ...}
-// { 0: [[11: w, 12: w, 3: w], decision], ... ,
-//   1: [[12: w, 1: w, 32: w], decision] }
-
-// {inputId: [{neuronId: weight}, decision], ...}, ...}
-// { 0: [{ 11: w}, decision], ...},
-//   1: [{ 11: w}, decision], ...} }
-
 // Ideas:
 // -create another thing called reset time that resets a neuron after some time to 0
-
-// Connections
-// 0 ->  1
-//   \-> 2
-// [{"from": 0, "to": 1: "weight": 8}, ...]
-
-// Neuron Values:
-// inputs: {"damage": 0, "age": 1, "eye0": 2, "eye1": 3, ...}
-// neurons: [7,5,10]
-// outputs: {"chase": 6, "retreat": 7, ...}
 
 class Connection {
     constructor(from, to, weight) {
@@ -55,40 +18,30 @@ class Neurons {
         this.outputs = {};     // dictionary of names to neuron index
         this.neurons = [];     // list of current neuron values
         this.nextNeurons = []; // list of incoming neuron values
-        this.connections = []; // list of connetion objects
-        this.shouldLog = false;
-    }
-
-    copy() {
-        let newNeurons = new Neurons();
-        Object.assign(newNeurons.inputs, this.inputs);
-        Object.assign(newNeurons.outputs, this.outputs);
-        newNeurons.neurons = this.neurons.slice().fill(0);
-        newNeurons.nextNeurons = this.neurons.slice().fill(0);
-        newNeurons.connections = this.connections.slice();
-        return newNeurons;
+        this.connections = []; // list of connection objects
+        this.maxNeurons = 60
+        this.maxConnections = 120
+        this.fps = 5 // fires per second?!?!
     }
 
     compute() {
-        for (let connection in this.connections) {
-            let value = this.neurons[connection.from];
-            let toAdd = connection.weight * value;
-            this.nextNeurons[connection.to] += toAdd;
+        let tempNeurons = new Array(this.neurons.length).fill(0); // Avoid reallocating an array
+        for (let i = 0; i < this.connections.length; i++) {
+            let conn = this.connections[i];
+            tempNeurons[conn.to] += Math.round(conn.weight * this.neurons[conn.from]);
         }
-        for (let i = 0; i < this.neurons.length; i++) {
-            this.neurons[i] = this.nextNeurons[i];
-        }
+        this.neurons = tempNeurons; // Swap arrays instead of copying values
     }
 
-    addInput(trait) {
+    addInput(name) {
         this.neurons.push(0);
         this.nextNeurons.push(0);
-        this.inputs[trait] = this.neurons.length - 1;
+        this.inputs[name] = this.neurons.length - 1;
         return this.neurons.length - 1;
     }
 
-    setInput(trait, value) {
-        let index = this.inputs[trait];
+    setInput(name, value) {
+        let index = this.inputs[name];
         this.neurons[index] = value;
     }
 
@@ -100,54 +53,121 @@ class Neurons {
     }
 
     getOutputs() {
-        let outputs = Object.assign({}, this.outputs);
-        for (const [key, value] of Object.entries(outputs)) {
-            outputs[key] = this.neurons[value];
+        let outputss = Object.assign({}, this.outputs);
+        for (const [key, value] of Object.entries(outputss)) {
+            outputss[key] = this.neurons[value];
         }
-        return outputs;
+        return outputss;
     }
 
     addNeuron() {
+        if ((this.neurons.length)-1 == this.maxNeurons) {
+            return
+        }
         this.neurons.push(0);
         this.nextNeurons.push(0);
         return this.neurons.length - 1;
     }
 
+    deleteNeuron() {
+        let index = Math.round(Math.random()*(this.neurons.length)-1)
+        this.neurons.splice(index, 1)
+        for (const connection of this.connections) {
+            let conIndex = 0
+            if (connection.from == index) {
+                this.deleteConnection(conIndex)
+                conIndex++
+            }
+            conIndex = 0
+            if (connection.to == index) {
+                this.deleteConnection(conIndex)
+                conIndex++
+            }
+        }
+    }
+
+    // for testing
     getNeuronValue(index) {
         return this.neurons[index];
     }
 
-    addConnection() {
-        let from = Math.round(Math.random() * this.neurons.length);
-        let to = Math.round(Math.random() * this.neurons.length);
+    addConnection(from, to, weight) {
+        if (this.connections != undefined) {
+            if ((this.connections.length - 1) == this.maxConnections) {
+                return
+            }
+        }
+        if (from == undefined)
+            from = Math.round(Math.random() * this.neurons.length - 1);
+        if (to == undefined)
+            to = Math.round(Math.random() * this.neurons.length - 1);
+        if (weight == undefined)
+            weight = Math.random*2;
         while (this.isInput(to)) // connection back to inputs are not allowed
-            to = Math.round(Math.random() * this.neurons.length);
-        let weight = Math.random();
+            to = Math.round(Math.random() * this.neurons.length - 1);
         this.connections.push(new Connection(from, to, weight));
     }
 
-    isInput(index) {
-        return index in this.inputs;
+    deleteConnection(index) {
+        if (index == undefined) {
+        this.connections.splice(Math.round(Math.random*this.connections.length-1), 1)
+        }
+        else {
+            this.connections.splice(index, 1)
+        }
+    }
+
+    changeConnection() {
+        if (this.connections.length === 0) {
+            console.warn("No connections to change.");
+            return;
+        }
+        const index = Math.floor(Math.random() * this.connections.length); // Fixed random number generation
+        this.connections[index].weight = Math.random() * 2;
+    }
+
+    getInputCount() {
+        return Object.keys(this.inputs).length;
+    }
+
+    getNeuronCount() {
+        return this.neurons.length;
+    }
+
+    // for testing
+    isInput(nameOrIndex) {
+        if (typeof nameOrIndex == "number")
+            return (Object.values(this.inputs).includes(nameOrIndex))
+        if (typeof nameOrIndex == "string")
+            return nameOrIndex in this.inputs;
+        throw new Error("Argument must be a string or integer.");
+    }
+
+    copy() {
+        let newNeurons = new Neurons();
+        newNeurons.inputs = JSON.parse(JSON.stringify(this.inputs)); // Deep copy
+        newNeurons.outputs = JSON.parse(JSON.stringify(this.outputs));
+        newNeurons.neurons = this.neurons.slice().fill(0);
+        newNeurons.nextNeurons = this.neurons.slice().fill(0);
+        newNeurons.connections = this.connections.slice();
+        return newNeurons;
     }
 
     mutate() {
-        // Mutation logic will go here in the future
-        // add and/or delete neurons
-        // add and/or delete connections
-        // change connection weights
+        let numOfMutations = Math.floor(Math.random() * 11);
+        const mutations = [
+            () => this.addConnection(),
+            () => this.deleteConnection(),
+            () => this.changeConnection(),
+            () => this.addNeuron(),
+            () => this.deleteNeuron()
+        ];
+        for (let i = 0; i < numOfMutations; i++) {
+            let mutationIndex = Math.floor(Math.random() * mutations.length);
+            mutations[mutationIndex](); // Directly call function
+        }
     }
 
-    log() {
-        if (!this.shouldLog)
-            return;
-        console.log("----");
-        console.log(this.inputs);
-        console.log(this.nextNeurons);
-        console.log(this.neurons);
-        console.log(this.connections);
-        console.log(this.outputs);
-        console.log("----");
-    }
 }
 
 module.exports = Neurons;

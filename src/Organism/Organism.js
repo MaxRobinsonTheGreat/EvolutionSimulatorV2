@@ -24,6 +24,7 @@ class Organism {
         this.ignore_brain_for = 0;
         this.mutability = 5;
         this.damage = 0;
+        this.moved = false
         this.brain = new Brain(this);
         if (parent != null) {
             this.inherit(parent);
@@ -49,7 +50,7 @@ class Organism {
     }
 
     lifespan() {
-        return (this.anatomy.cells.length + (this.anatomy.cool_count * 3)) * Hyperparams.lifespanMultiplier;
+        return (this.anatomy.cells.length * Hyperparams.lifespanMultiplier);
     }
 
     maxHealth() {
@@ -173,21 +174,32 @@ class Organism {
         return false;
     }
 
-    attemptRotate() {
+    test() {
         if (!this.can_rotate) {
             this.direction = Directions.getRandomDirection();
             this.move_count = 0;
             return true;
         }
+    }
+
+    attemptRotate(way) {
+        if(!this.can_rotate){
+            // this.direction = Directions.getRandomDirection();
+            this.move_count = 0;
+            return true;
+        }
         var new_rotation = Directions.getRandomDirection();
-        if (this.isClear(this.c, this.r, new_rotation)) {
+        if (way != null) {
+            new_rotation = way;
+        }
+        if(this.isClear(this.c, this.r, new_rotation)){
             for (var cell of this.anatomy.cells) {
                 var real_c = this.c + cell.rotatedCol(this.rotation);
                 var real_r = this.r + cell.rotatedRow(this.rotation);
                 this.env.changeCell(real_c, real_r, CellStates.empty, null);
             }
             this.rotation = new_rotation;
-            this.direction = Directions.getRandomDirection();
+            // this.direction = Directions.getRandomDirection();
             this.updateGrid();
             this.move_count = 0;
             return true;
@@ -258,14 +270,14 @@ class Organism {
     }
 
     heal() {
-        if (this.damage > 0) {
-            this.damage -= 0.05
+        if (this.damage >= 0.01) {
+            this.damage -= 0.01
         }
     }
 
     feed(yesONo) {
         if (yesONo) {
-            let amount = 1
+            let amount = 6
             this.food_collected -= amount
             return amount
         }
@@ -307,17 +319,16 @@ class Organism {
                 return this.living
         }
         if (this.anatomy.is_mover) {
-            this.move_count++;
             var changed_dir = false;
-            if (this.ignore_brain_for == 0) {
+            if (this.ignore_brain_for == 0){
                 changed_dir = this.brain.decide();
+            }  
+            else{
+                this.ignore_brain_for --;
             }
-            else {
-                this.ignore_brain_for--;
-            }
-            var moved = this.attemptMove();
-            if ((this.move_count > this.move_range && !changed_dir) || !moved) {
-                var rotated = this.attemptRotate();
+            this.moved = this.attemptMove();
+            if ((this.move_count > this.move_range && !changed_dir) || !this.moved){
+                var rotated = false
                 if (!rotated) {
                     this.changeDirection(Directions.getRandomDirection());
                     if (changed_dir)

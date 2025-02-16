@@ -8,15 +8,15 @@ var color_scheme = {
     "producer":"#017501",
     "mover":"#3692e1",
     "killer":"#dc3c3c",
-    "armor":"#750976",
+    "armor":"#6e0b87",
     "cool":"#ffffff",
     "camo":"#000000",
     "inner-camo":"#131d29",
     "eye":"#B6C1EA",
     "eye-slit":"#0E1318",
-    "parasitic":"#8a2b3b",
-    "detector":"#ffcd17",
-    "secretion":"#101c9e",
+    "parasitic":"#8a2b47",
+    "detector":"#2b3994",
+    "secretion":"#f2e127",
 }
 
 // Renderer controls access to a canvas. There is one renderer for each canvas
