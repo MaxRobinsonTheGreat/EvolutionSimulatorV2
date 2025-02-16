@@ -72,6 +72,10 @@ class BodyCell{
                 return this.loc_col;
         }
     }
+    
+    getStateName() {
+        return this.state.name;
+    }
 }
 
 module.exports = BodyCell;

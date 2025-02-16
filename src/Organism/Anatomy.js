@@ -31,7 +31,6 @@ class Anatomy {
         this.cells.push(new_cell);
         if (new_cell.state == CellStates.cool){
             this.cool_count += 1;
-            console.log("cool_count = " + this.cool_count)
         }
         return new_cell;
     }
@@ -44,7 +43,6 @@ class Anatomy {
         this.cells.push(new_cell);
         if (new_cell.state == CellStates.cool){
             this.cool_count += 1;
-            console.log("cool_count = " + this.cool_count)
         }
         return new_cell;
     }
@@ -54,7 +52,6 @@ class Anatomy {
         this.cells.push(new_cell);
         if (new_cell.state == CellStates.cool){
             this.cool_count += 1;
-            console.log("cool_count = " + this.cool_count)
         }
         return new_cell;
     }
@@ -77,7 +74,6 @@ class Anatomy {
             if (cell.loc_col == c && cell.loc_row == r){
                 if (cell.state == CellStates.cool){
                     this.cool_count -= 1;
-                    console.log("cool_count = " + this.cool_count)
                 }
                 this.cells.splice(i, 1);
                 break;
@@ -149,7 +145,6 @@ class Anatomy {
             newcell.state = {name: cell.state.name};
             if (state == CellStates.cool){
                 this.cool_count += 1;
-                console.log("cool_count = " + this.cool_count)
             }
             anatomy.cells.push(newcell)
         }

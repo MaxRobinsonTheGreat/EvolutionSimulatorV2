@@ -1,17 +1,20 @@
 const CellStates = require("../Organism/Cell/CellStates");
 
 var color_scheme = {
-    "empty":"#0E1318",
-    "food":"#2F7AB7",
+    "empty":"#131d29",
+    "food":"#a199a0",
     "wall":"gray",
-    "mouth":"#DEB14D",
-    "producer":"#15DE59",
-    "mover":"#60D4FF",
-    "killer":"#F82380",
-    "armor":"#7230DB",
-    "cool":"blue",
+    "mouth":"#fea300",
+    "producer":"#017501",
+    "mover":"#3692e1",
+    "killer":"#dc3c3c",
+    "armor":"#750976",
+    "cool":"#2ea397",
+    "camo":"#32383c",
+    "inner-camo":"#131d29",
     "eye":"#B6C1EA",
-    "eye-slit": "#0E1318"
+    "eye-slit":"#0E1318",
+    "parasitic":"#b53e59",
 }
 
 // Renderer controls access to a canvas. There is one renderer for each canvas

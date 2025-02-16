@@ -7,6 +7,7 @@ const Hyperparams = {
         this.killableNeighbors = Neighbors.adjacent;
         this.edibleNeighbors = Neighbors.adjacent;
         this.growableNeighbors = Neighbors.adjacent;
+        this.hostNeighbors = Neighbors.adjacent;
 
         this.useGlobalMutability = false;
         this.globalMutability = 5;
@@ -25,6 +26,8 @@ const Hyperparams = {
         this.seeThroughSelf = false;
 
         this.foodDropProb = 0;
+
+        this.parasiticSteal = 100;
 
         this.extraMoverFoodCost = 0;
 

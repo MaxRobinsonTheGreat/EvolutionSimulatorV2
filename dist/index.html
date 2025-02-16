@@ -60,7 +60,9 @@
 							<div class='cell-legend-type' id='mover' title="Mover: Allows for movement and rotation."></div>
 							<div class='cell-legend-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
 							<div class='cell-legend-type' id='armor' title="Armor: Negates affects of killer cell."></div>
-							<div class='cell-legend-type' id='cool' title="Cool: Cools the cell to increase age."></div>
+							<div class='cell-legend-type' id='cool' title="Vacuole: Increases the age and decreases mutation chance of a organism."></div>
+							<div class='cell-legend-type' id='camo' title="Mimicker: Is seen as something else."></div>
+							<div class='cell-legend-type' id='parasitic' title="Parasite: Feeds off other organisms."></div>
 							<div class='cell-legend-type' id='eye' title="Eye: Observes cells and decides movement."></div>
 							<div class='cell-legend-type' id='food' title="Food: Not part of an organism. Once an organism has eaten enough food, it will reproduce."></div>
 							<div class='cell-legend-type' id='wall' title="Wall: Not part of an organism. Blocks movement and reproduction."></div>
@@ -95,19 +97,24 @@
 								<div class='cell-type' id='mouth' title="Mouth: Eats adjacent food."></div>
 								<div class='cell-type' id='producer' title="Producer: Produces adjacent food."></div>
 								<div class='cell-type' id='mover' title="Mover: Allows for movement and rotation."></div>
-								<div class='cell-type' id='cool' title="Cool: Cools the cell to increase ages."></div>
+								<div class='cell-type' id='cool' title="Vacuole: Increases the age and decreases mutation chance of a oraganism."></div>
 							</div>
 							<div style='grid-column: 2;'>
 								<div class='cell-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
 								<div class='cell-type' id='armor' title="Armor: Negates affects of killer cell."></div>
 								<div class='cell-type' id='eye' title="Eye: Looks for cells to move away from or towards. Click again on a placed cell to rotate"></div>
+								<div class='cell-type' id='camo' title="Mimicker: Is seen as something else."></div>
 							</div>
-
+							<div style='grid-column: 3;'>
+								<div class='cell-type' id='parasitic' title="Parasite: Feeds off other organisms."></div>
+							</div>
+						</div>
+						<div>
 							<button id='clear-editor'>Clear</button>
 							<button class='randomize-button' id='generate-random' title="Randomizes organism"><i class="fa fa-random"></i></button>
 							<br>
 						</div>
-						
+					
 					</div>
 					<div class='right-half'>
 						<div id='organism-details' style="display:none;">
@@ -148,6 +155,8 @@
 									<option value="killer">killer</option>
 									<option value="armor">armor</option>
 									<option value="cool">cool</option>
+									<option value="camo">camo</option>
+									<option value="parasitic">parasitic</option>
 									<option value="eye">eye</option>
 								</select>
 

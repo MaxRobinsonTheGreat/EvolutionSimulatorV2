@@ -56,6 +56,22 @@ class Cool extends CellState {
         super('cool');
     }
 }
+class Camo extends CellState {
+    constructor() {
+        super('camo');
+    }
+    render(ctx, cell, size, mimicryState) {
+        CellStates[cell.cell_owner.mimicryState].render(ctx, cell, size);
+        ctx.fillStyle = 'black';
+        var o = size / 4;
+        ctx.fillRect(cell.x + o, cell.y + o, size / 2, size / 2);
+    }
+}
+class Parasitic extends CellState {
+    constructor() {
+        super('parasitic');
+    }
+}
 class Eye extends CellState {
     constructor() {
         super('eye');
@@ -82,6 +98,7 @@ class Eye extends CellState {
 const CellStates = {
     empty: new Empty(),
     food: new Food(),
+    camo: new Camo(),
     wall: new Wall(),
     mouth: new Mouth(),
     producer: new Producer(),
@@ -90,9 +107,10 @@ const CellStates = {
     armor: new Armor(),
     cool: new Cool(),
     eye: new Eye(),
+    parasitic: new Parasitic(),
     defineLists() {
-        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.cool, this.eye]
-        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.cool, this.eye];
+        this.all = [this.empty, this.food, this.camo, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.cool, this.eye, this.parasitic]
+        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.cool, this.camo, this.eye, this.parasitic];
     },
     getRandomName: function() {
         return this.all[Math.floor(Math.random() * this.all.length)].name;

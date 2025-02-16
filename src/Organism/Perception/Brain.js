@@ -61,7 +61,10 @@ class Brain {
                 continue;
             }
             if (obs.distance < closest) {
-                decision = this.decisions[obs.cell.state.name];
+                if (obs.cell.getStateName)
+                    decision = this.decisions[obs.cell.getStateName()];
+                else
+                    decision = this.decisions[obs.cell.state.name];
                 move_direction = obs.direction;
                 closest = obs.distance;
             }
