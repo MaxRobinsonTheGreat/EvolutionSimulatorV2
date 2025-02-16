@@ -5,7 +5,7 @@ const BodyCell = require("./BodyCell");
 const GridMap = require("../../.././Grid/GridMap");
 // use cell at fucnction on Grid map then that variable do .chemical = ____
 
-class DetectorCell extends BodyCell{
+class DetectorCell extends BodyCell {
     constructor(org, loc_col, loc_row){
         super(CellStates.detector, org, loc_col, loc_row);
     }
@@ -24,13 +24,11 @@ class DetectorCell extends BodyCell{
 
     performFunction() {
         if (this.org.Brain) {
-        var env = this.org.env
-        let column = this.org.c + this.loc_col
-        let row = this.org.r + this.loc_row
-        let thisCell = env.grid_map.cellAt(column, row)
-        if (thisCell != null) {
-            this.org.Brain.detect(thisCell);
-            }
+            var env = this.org.env
+            let column = this.org.c + this.loc_col
+            let row = this.org.r + this.loc_row
+            let chemical = env.grid_map.cellAt(column, row).chemical
+            this.org.Brain.detect(chemical);
         }
     }
 }

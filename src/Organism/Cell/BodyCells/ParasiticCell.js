@@ -12,7 +12,7 @@ class ParasiticCell extends BodyCell {
         var prob = Hyperparams.parasiticSteal;
         var real_c = this.getRealCol();
         var real_r = this.getRealRow();
-        if (Math.random() * 100 <= prob) {
+        if (Math.random() * 50 <= prob) {
             this.hostNeighbors = this.hostNeighbors;
             if (Math.random() * 100 <= prob) {
                 var loc = Hyperparams.hostNeighbors[Math.floor(Math.random() * Hyperparams.hostNeighbors.length)]

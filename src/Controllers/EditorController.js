@@ -110,27 +110,36 @@ class EditorController extends CanvasController{
     defineEditorDetails() {
         this.details_html = $('#organism-details');
         this.edit_details_html = $('#edit-organism-details');
-
+    
         this.decision_names = ["ignore", "move away", "move towards"];
-
-        $('#move-range-edit').change ( function() {
+    
+        $('#move-range-edit').change(() => {
             this.env.organism.move_range = parseInt($('#move-range-edit').val());
-        }.bind(this));
-		
-        $('#mutation-rate-edit').change ( function() {
+        });
+    
+        $('#mutation-rate-edit').change(() => {
             this.env.organism.mutability = parseInt($('#mutation-rate-edit').val());
-        }.bind(this));
-        $('#observation-type-edit').change ( function() {
+        });
+    
+        $('#observation-type-edit').change(() => {
             this.setBrainEditorValues($('#observation-type-edit').val());
             this.setBrainDetails();
-        }.bind(this));
-        $('#reaction-edit').change ( function() {
-            var obs = $('#observation-type-edit').val();
-            var decision = parseInt($('#reaction-edit').val());
+        });
+    
+        $('#reaction-edit').change(() => {
+            const obs = $('#observation-type-edit').val();
+            const decision = parseInt($('#reaction-edit').val());
+            
+            // Ensure brain.decisions is initialized properly
+            if (!this.env.organism.brain.decisions || Array.isArray(this.env.organism.brain.decisions)) {
+                this.env.organism.brain.decisions = {}; // Reinitialize to an empty object
+            }
+            
             this.env.organism.brain.decisions[obs] = decision;
             this.setBrainDetails();
-        }.bind(this));
+        });
     }
+    
 
     defineSaveLoad() {
         $('#save-org').click(()=>{

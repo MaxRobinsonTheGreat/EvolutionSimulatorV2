@@ -60,12 +60,14 @@
 							<div class='cell-legend-type' id='mover' title="Mover: Allows for movement and rotation."></div>
 							<div class='cell-legend-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
 							<div class='cell-legend-type' id='armor' title="Armor: Negates affects of killer cell."></div>
-							<div class='cell-legend-type' id='cool' title="Vacuole: Increases the age and decreases mutation chance of a organism."></div>
+							<div class='cell-legend-type' id='cool' title="Healer: Increases the age and decreases mutation chance of a organism."></div>
 							<div class='cell-legend-type' id='camo' title="Mimicker: Is seen as something else."></div>
 							<div class='cell-legend-type' id='parasitic' title="Parasite: Feeds off other organisms."></div>
 							<div class='cell-legend-type' id='eye' title="Eye: Observes cells and decides movement."></div>
 							<div class='cell-legend-type' id='food' title="Food: Not part of an organism. Once an organism has eaten enough food, it will reproduce."></div>
 							<div class='cell-legend-type' id='wall' title="Wall: Not part of an organism. Blocks movement and reproduction."></div>
+							<div class='cell-legend-type' id='secretion' title="Secretion: Secretes chemicals which is detected by the detector."></div>
+							<div class='cell-legend-type' id='detector' title="Detector: Detects chemicals."></div>
 						</div><br>
 					</div>
 					<div class='right-half'>
@@ -97,7 +99,7 @@
 								<div class='cell-type' id='mouth' title="Mouth: Eats adjacent food."></div>
 								<div class='cell-type' id='producer' title="Producer: Produces adjacent food."></div>
 								<div class='cell-type' id='mover' title="Mover: Allows for movement and rotation."></div>
-								<div class='cell-type' id='cool' title="Vacuole: Increases the age and decreases mutation chance of a oraganism."></div>
+								<div class='cell-type' id='cool' title="Healer: Increases the age and decreases mutation chance of a oraganism."></div>
 							</div>
 							<div style='grid-column: 2;'>
 								<div class='cell-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
@@ -107,6 +109,8 @@
 							</div>
 							<div style='grid-column: 3;'>
 								<div class='cell-type' id='parasitic' title="Parasite: Feeds off other organisms."></div>
+								<div class='cell-type' id='secretion' title="Secretor: Secretes."></div>
+								<div class='cell-type' id='detector' title="Detector: Detects."></div>
 							</div>
 						</div>
 						<div>
@@ -158,6 +162,8 @@
 									<option value="camo">camo</option>
 									<option value="parasitic">parasitic</option>
 									<option value="eye">eye</option>
+									<option value="secretion">secretion</option>
+									<option value="detector">detector</option>
 								</select>
 
 								<label for="reaction-edit">Reaction: </label>
@@ -308,7 +314,8 @@
 				<div class="list-title-container">
 					<h2>🌍Worlds</h2>
 					<div id="worlds-list-container" class="list-container">
-						<ul id="worlds-list"></ul>
+						<ul id="worlds-list">
+						</ul>
 					</div>
 				</div>
 				<div class="list-title-container">

@@ -50,13 +50,11 @@ const LoadController = {
         const base = `./assets/${name}/`;
         let list = [];
         try {
-            console.log("somestring")
             let resp = await fetch(base+'_list.json');
             list = await resp.json();
         } catch(e) {
             console.error('Failed to load list: ', e);
         }
-        console.log("someending!")
         let id = `#${name}-list`
         $(id).empty();
         for (let item of list) {

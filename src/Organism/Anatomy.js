@@ -124,6 +124,15 @@ class Anatomy {
         return neighbors;
     }
 
+    countCellType(cellType) {
+        let count = 0;
+        for (let cell in this.cells) {
+            if (cell.state == cellType)
+                count++;
+        }
+        return count;
+    }
+
     isEqual(anatomy) { // currently unused helper func. inefficient, avoid usage in prod.
         if (this.cells.length !== anatomy.cells.length) return false;
         for (let i in this.cells) {

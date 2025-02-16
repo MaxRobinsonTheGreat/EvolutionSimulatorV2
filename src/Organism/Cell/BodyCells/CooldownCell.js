@@ -7,7 +7,6 @@ class CooldownCell extends BodyCell {
     }
     
     performFunction() {
-        this.lifespan += 1
         this.org.heal()
     }
 }

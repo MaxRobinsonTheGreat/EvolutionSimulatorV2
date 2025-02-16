@@ -150,7 +150,7 @@ class Organism {
     }
 
     calcRandomChance(prob) {
-        return (Math.random() * 100) < (prob - (this.anatomy.cool_count * 3));
+        return (Math.random() * 100) < prob;
     }
 
     attemptMove() {
@@ -293,7 +293,6 @@ class Organism {
     }
 
     update() {
-        console.log("WBIDW")
         this.lifetime++;
         if (this.lifetime > this.lifespan()) {
             this.die();
@@ -311,7 +310,7 @@ class Organism {
             this.move_count++;
             var changed_dir = false;
             if (this.ignore_brain_for == 0) {
-                changed_dir = this.brain.brainLoop();
+                changed_dir = this.brain.decide();
             }
             else {
                 this.ignore_brain_for--;
