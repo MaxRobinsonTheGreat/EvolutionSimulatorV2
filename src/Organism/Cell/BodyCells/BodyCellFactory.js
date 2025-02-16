@@ -7,7 +7,10 @@ const CooldownCell = require("./CooldownCell");
 const CamoCell = require("./CamoCell");
 const EyeCell = require("./EyeCell");
 const ParasiticCell = require("./ParasiticCell");
+const DetectorCell = require("./DetectorCell");
+const SecretionCell = require("./SecretionCell");
 const CellStates = require("../CellStates");
+
 
 
 const BodyCellFactory = {
@@ -21,6 +24,8 @@ const BodyCellFactory = {
         type_map[CellStates.cool.name] = CooldownCell;
         type_map[CellStates.camo.name] = CamoCell;
         type_map[CellStates.parasitic.name] = ParasiticCell;
+        type_map[CellStates.detector.name] = DetectorCell;
+        type_map[CellStates.secretion.name] = SecretionCell;
         type_map[CellStates.eye.name] = EyeCell;
         this.type_map = type_map;
     },

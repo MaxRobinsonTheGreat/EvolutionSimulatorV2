@@ -11,10 +11,11 @@ class GridMap {
         this.cols = cols;
         this.rows = rows;
         this.cell_size = cell_size;
+        let chemical = null;
         for(var c=0; c<cols; c++) {
             var row = [];
             for(var r=0; r<rows; r++) {
-                var cell = new Cell(CellStates.empty, c, r, c*cell_size, r*cell_size);
+                var cell = new Cell(CellStates.empty, c, r, c*cell_size, r*cell_size, chemical);
                 row.push(cell);
             }            
             this.grid.push(row);

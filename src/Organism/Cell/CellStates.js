@@ -60,7 +60,7 @@ class Camo extends CellState {
     constructor() {
         super('camo');
     }
-    render(ctx, cell, size, mimicryState) {
+    render(ctx, cell, size) {
         CellStates[cell.cell_owner.mimicryState].render(ctx, cell, size);
         ctx.fillStyle = 'black';
         var o = size / 4;
@@ -70,6 +70,16 @@ class Camo extends CellState {
 class Parasitic extends CellState {
     constructor() {
         super('parasitic');
+    }
+}
+class Detector extends CellState {
+    constructor() {
+        super('detector');
+    }
+}
+class Secretion extends CellState {
+    constructor() {
+        super('secretion');
     }
 }
 class Eye extends CellState {
@@ -108,9 +118,11 @@ const CellStates = {
     cool: new Cool(),
     eye: new Eye(),
     parasitic: new Parasitic(),
+    detector: new Detector(),
+    secretion: new Secretion(),
     defineLists() {
-        this.all = [this.empty, this.food, this.camo, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.cool, this.eye, this.parasitic]
-        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.cool, this.camo, this.eye, this.parasitic];
+        this.all = [this.empty, this.food, this.camo, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.cool, this.eye, this.parasitic, this.detector, this.secretion]
+        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.cool, this.camo, this.eye, this.parasitic, this.detector, this.secretion];
     },
     getRandomName: function() {
         return this.all[Math.floor(Math.random() * this.all.length)].name;

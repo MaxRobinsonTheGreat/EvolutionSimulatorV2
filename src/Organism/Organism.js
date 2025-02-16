@@ -265,7 +265,7 @@ class Organism {
 
     feed(yesONo) {
         if (yesONo) {
-            amount = Math.round(this.food_collected/4)
+            let amount = 1
             this.food_collected -= amount
             return amount
         }
@@ -293,6 +293,7 @@ class Organism {
     }
 
     update() {
+        console.log("WBIDW")
         this.lifetime++;
         if (this.lifetime > this.lifespan()) {
             this.die();
@@ -306,12 +307,11 @@ class Organism {
             if (!this.living)
                 return this.living
         }
-
         if (this.anatomy.is_mover) {
             this.move_count++;
             var changed_dir = false;
             if (this.ignore_brain_for == 0) {
-                changed_dir = this.brain.decide();
+                changed_dir = this.brain.brainLoop();
             }
             else {
                 this.ignore_brain_for--;

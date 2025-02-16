@@ -22,6 +22,30 @@ const Directions = {
                 return this.left;
         }
     },
+    getLeftDirection: function(dir) {
+        switch(dir){
+            case this.up:
+                return this.left;
+            case this.down:
+                return this.right;
+            case this.left:
+                return this.down;
+            case this.right:
+                return this.up;
+        }
+    },
+    getRightDirection: function(dir) {
+        switch(dir){
+            case this.up:
+                return this.right;
+            case this.down:
+                return this.left;
+            case this.left:
+                return this.up;
+            case this.right:
+                return this.down;
+        }
+    },
     rotateRight: function(dir) {
         dir++;
         if (dir > 3){
