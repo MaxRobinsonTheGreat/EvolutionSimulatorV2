@@ -11,5 +11,14 @@ module.exports = {
         new webpack.ProvidePlugin({
             $: "jquery",
         })
-    ]
+    ],
+    module: {
+        rules: [
+          {
+            test: /test\.js$/,
+            use: 'mocha-loader',
+            exclude: /node_modules/,
+          },
+        ],
+       }       
 };

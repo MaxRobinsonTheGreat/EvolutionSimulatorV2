@@ -4,7 +4,7 @@
   "description": "Version 2 of the evolution simulator",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "build": "webpack --mode=production",
     "build-dev": "webpack --mode=development",
     "build-watch": "webpack --watch --mode=development"
@@ -21,12 +21,13 @@
   },
   "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
   "devDependencies": {
-    "webpack": "^5.89.0",
-    "webpack-cli": "^3.3.12"
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "glob-parent": "^6.0.2",
     "jquery": "^3.6.1",
+    "mocha": "^8.4.0",
     "npm": "^10.2.1",
     "watchpack": "^2.4.0"
   }
