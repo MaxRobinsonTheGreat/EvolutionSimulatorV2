@@ -33,7 +33,6 @@ class BodyCell{
         // default behavior: none
     }
 
-
     getRealCol() {
         return this.org.c + this.rotatedCol(this.org.rotation);
     }

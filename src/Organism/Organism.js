@@ -49,7 +49,7 @@ class Organism {
     }
 
     lifespan() {
-        return this.anatomy.cells.length * Hyperparams.lifespanMultiplier;
+        return (this.anatomy.cells.length + (this.anatomy.cool_count * 4)) * Hyperparams.lifespanMultiplier;
     }
 
     maxHealth() {
@@ -278,6 +278,7 @@ class Organism {
 
     update() {
         this.lifetime++;
+        console.log("lifespan = "+this.lifespan())
         if (this.lifetime > this.lifespan()) {
             this.die();
             return this.living;
